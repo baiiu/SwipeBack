@@ -101,7 +101,7 @@ public class SwipeBackLayout extends ViewGroup {
      */
     private boolean enablePullToBack = true;
 
-    private static final float BACK_FACTOR = 0.5f;
+    private static final float BACK_FACTOR = 0.3f;
 
     /**
      * the anchor of calling finish.
@@ -357,12 +357,12 @@ public class SwipeBackLayout extends ViewGroup {
 
         @Override
         public int getViewVerticalDragRange(View child) {
-            return verticalDragRange;
+            return (dragEdge == DragEdge.TOP || dragEdge == DragEdge.BOTTOM) ? (ViewDragHelper.EDGE_TOP | ViewDragHelper.EDGE_BOTTOM) : 0;
         }
 
         @Override
         public int getViewHorizontalDragRange(View child) {
-            return horizontalDragRange;
+            return (dragEdge == DragEdge.LEFT || dragEdge == DragEdge.RIGHT) ? (ViewDragHelper.EDGE_LEFT | ViewDragHelper.EDGE_RIGHT) : 0;
         }
 
         @Override
