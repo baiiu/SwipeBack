@@ -45,10 +45,6 @@ public class SwipeBackActivity extends AppCompatActivity implements SwipeBackLay
         swipeBackLayout.setDragEdge(dragEdge);
     }
 
-    public void setDragDirectMode(SwipeBackLayout.DragDirectMode dragDirectMode) {
-        swipeBackLayout.setDragDirectMode(dragDirectMode);
-    }
-
     public SwipeBackLayout getSwipeBackLayout() {
         return swipeBackLayout;
     }
