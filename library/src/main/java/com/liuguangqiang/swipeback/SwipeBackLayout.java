@@ -18,6 +18,7 @@ package com.liuguangqiang.swipeback;
 
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.Canvas;
 import android.support.v4.view.MotionEventCompat;
 import android.support.v4.view.ViewCompat;
 import android.support.v4.view.ViewPager;
@@ -47,6 +48,7 @@ import android.widget.ScrollView;
 public class SwipeBackLayout extends ViewGroup {
 
     private static final String TAG = "SwipeBackLayout";
+    private float mFractionScreen;
 
     public enum DragEdge {
         LEFT,
@@ -65,6 +67,7 @@ public class SwipeBackLayout extends ViewGroup {
     }
 
     private static final double AUTO_FINISHED_SPEED_LIMIT = 2000.0;
+    private static final int DEFAULT_SCRIM_COLOR = 0x99000000;
 
     private final ViewDragHelper viewDragHelper;
 
@@ -84,6 +87,7 @@ public class SwipeBackLayout extends ViewGroup {
 
     private int mContentLeft;
     private int mContentTop;
+    private int mScrimColor = DEFAULT_SCRIM_COLOR;
 
     /**
      * Whether allow to pull this layout.
@@ -259,6 +263,37 @@ public class SwipeBackLayout extends ViewGroup {
             default:
                 return verticalDragRange;
         }
+    }
+
+    @Override
+    protected boolean drawChild(Canvas canvas, View child, long drawingTime) {
+        final boolean drawContent = child == target;
+
+        boolean ret = super.drawChild(canvas, child, drawingTime);
+        if (mFractionScreen <= 1 && drawContent
+                && viewDragHelper.getViewDragState() != ViewDragHelper.STATE_IDLE) {
+//            drawShadow(canvas, child);
+            drawScrim(canvas, child);
+        }
+        return ret;
+    }
+
+    private void drawScrim(Canvas canvas, View child) {
+        final int baseAlpha = (mScrimColor & 0xff000000) >>> 24;
+        final int alpha = (int) (baseAlpha * (1 - mFractionScreen));
+        final int color = alpha << 24 | (mScrimColor & 0xffffff);
+
+        if (dragEdge == DragEdge.LEFT) {
+            canvas.clipRect(0, 0, child.getLeft(), getHeight());
+        } else if (dragEdge == DragEdge.RIGHT) {
+            canvas.clipRect(child.getRight(), 0, getRight(), getHeight());
+        } else if (dragEdge == DragEdge.BOTTOM) {
+            canvas.clipRect(child.getLeft(), child.getBottom(), getRight(), getHeight());
+        } else if (dragEdge == DragEdge.TOP) {
+            canvas.clipRect(child.getLeft(), 0, getRight(), child.getTop());
+        }
+
+        canvas.drawColor(color);
     }
 
     private int mInitialMotionX;
@@ -452,11 +487,12 @@ public class SwipeBackLayout extends ViewGroup {
             float fractionAnchor = (float) draggingOffset / finishAnchor;
             if (fractionAnchor >= 1) fractionAnchor = 1;
 
-            float fractionScreen = (float) draggingOffset / (float) getDragRange();
-            if (fractionScreen >= 1) fractionScreen = 1;
+            mFractionScreen = (float) draggingOffset / (float) getDragRange();
+            if (mFractionScreen >= 1) mFractionScreen = 1;
+            invalidate();
 
             if (swipeBackListener != null) {
-                swipeBackListener.onViewPositionChanged(fractionAnchor, fractionScreen);
+                swipeBackListener.onViewPositionChanged(fractionAnchor, mFractionScreen);
             }
         }
 
@@ -477,23 +513,25 @@ public class SwipeBackLayout extends ViewGroup {
                 isBack = false;
             }
 
+            Log.d("mLogU", xvel + "");
+
             int finalLeft;
             int finalTop;
             switch (dragEdge) {
                 case LEFT:
-                    finalLeft = isBack ? horizontalDragRange : 0;
+                    finalLeft = xvel >= 0 && isBack ? horizontalDragRange : 0;
                     smoothScrollToX(finalLeft);
                     break;
                 case RIGHT:
-                    finalLeft = isBack ? -horizontalDragRange : 0;
+                    finalLeft = xvel <= 0 && isBack ? -horizontalDragRange : 0;
                     smoothScrollToX(finalLeft);
                     break;
                 case TOP:
-                    finalTop = isBack ? verticalDragRange : 0;
+                    finalTop = yvel >= 0 && isBack ? verticalDragRange : 0;
                     smoothScrollToY(finalTop);
                     break;
                 case BOTTOM:
-                    finalTop = isBack ? -verticalDragRange : 0;
+                    finalTop = yvel <= 0 && isBack ? -verticalDragRange : 0;
                     smoothScrollToY(finalTop);
                     break;
             }
