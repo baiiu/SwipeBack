@@ -23,13 +23,17 @@ import android.support.v4.view.MotionEventCompat;
 import android.support.v4.view.ViewCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.ViewDragHelper;
+import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.WebView;
 import android.widget.AbsListView;
+import android.widget.HorizontalScrollView;
 import android.widget.ScrollView;
+
+import java.util.Stack;
 
 /**
  * Swipe or Pull to finish a Activity.
@@ -160,22 +164,43 @@ public class SwipeBackLayout extends ViewGroup {
 
     /**
      * Find out the scrollable child view from a ViewGroup.
+     * <p>
+     * 树的遍历
      */
     private void findScrollView(ViewGroup viewGroup) {
+        if (viewGroup == null) return;
         scrollChild = viewGroup;
-        if (viewGroup.getChildCount() > 0) {
-            int count = viewGroup.getChildCount();
-            View child;
-            for (int i = 0; i < count; i++) {
-                child = viewGroup.getChildAt(i);
-                if (child instanceof AbsListView
-                        || child instanceof ScrollView
+
+        Stack<View> stack = new Stack<>();
+        stack.push(viewGroup);
+
+        while (!stack.empty()) {
+            View child = stack.pop();
+
+            if (dragEdge == DragEdge.LEFT || dragEdge == DragEdge.RIGHT) {
+                if (child instanceof HorizontalScrollView
                         || child instanceof ViewPager
                         || child instanceof WebView) {
                     scrollChild = child;
                     return;
                 }
             }
+
+            if (dragEdge == DragEdge.TOP || dragEdge == DragEdge.BOTTOM) {
+                if (child instanceof ScrollView || child instanceof AbsListView || child instanceof RecyclerView) {
+                    scrollChild = child;
+                    return;
+                }
+            }
+
+            if (child instanceof ViewGroup) {
+                viewGroup = (ViewGroup) child;
+
+                for (int i = 0, count = viewGroup.getChildCount(); i < count; ++i) {
+                    stack.push(viewGroup.getChildAt(i));
+                }
+            }
+
         }
     }
 
