@@ -27,10 +27,6 @@ public class SwipeBackActivity extends AppCompatActivity implements SwipeBackLay
         return swipeBackLayout;
     }
 
-    public void setEnableSwipe(boolean enableSwipe) {
-        swipeBackLayout.setEnablePullToBack(enableSwipe);
-    }
-
     public void setDragEdge(SwipeBackLayout.DragEdge dragEdge) {
         swipeBackLayout.setDragEdge(dragEdge);
     }

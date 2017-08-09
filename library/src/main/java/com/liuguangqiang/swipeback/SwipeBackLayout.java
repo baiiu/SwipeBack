@@ -24,7 +24,6 @@ import android.support.v4.view.ViewCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.ViewDragHelper;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -139,15 +138,6 @@ public class SwipeBackLayout extends ViewGroup {
         final float density = getResources().getDisplayMetrics().density;
         final float minVel = 400 * density;
         viewDragHelper.setMinVelocity(minVel);
-    }
-
-    public void setScrollChild(View view) {
-        scrollChild = view;
-    }
-
-    public void setEnablePullToBack(boolean b) {
-        enablePullToBack = b;
-        Log.i(TAG, "enablePullToBack:" + enablePullToBack);
     }
 
     private void ensureTarget() {
@@ -310,10 +300,9 @@ public class SwipeBackLayout extends ViewGroup {
 
         ensureTarget();
 
-
         switch (action) {
             case MotionEvent.ACTION_DOWN:
-                enablePullToBack = true;
+                enablePullToBack = false;
                 mInitialMotionX = (int) ev.getX();
                 mInitialMotionY = (int) ev.getY();
                 break;
@@ -356,12 +345,53 @@ public class SwipeBackLayout extends ViewGroup {
     }
 
     @Override
-    public boolean onTouchEvent(MotionEvent event) {
-        viewDragHelper.processTouchEvent(event);
+    public boolean onTouchEvent(MotionEvent ev) {
+        viewDragHelper.processTouchEvent(ev);
 
+        if (enablePullToBack) {
+            return true;
+        }
 
-        //final int action = event.getAction();
+        switch (ev.getAction()) {
+            case MotionEvent.ACTION_DOWN:
+                enablePullToBack = false;
+                mInitialMotionX = (int) ev.getX();
+                mInitialMotionY = (int) ev.getY();
+                break;
+            case MotionEvent.ACTION_MOVE:
+                final float x = ev.getX();
+                final float y = ev.getY();
+                final float adx = Math.abs(x - mInitialMotionX);
+                final float ady = Math.abs(y - mInitialMotionY);
+                final int slop = viewDragHelper.getTouchSlop();
 
+                if (dragEdge == DragEdge.LEFT || dragEdge == DragEdge.RIGHT) {
+                    if (adx > slop && adx * 0.5 > ady) {
+                        enablePullToBack = true;
+                        break;
+                    }
+
+                    if (ady > slop && ady > adx) {
+                        viewDragHelper.cancel();
+                        enablePullToBack = false;
+                        break;
+                    }
+                }
+
+                if (dragEdge == DragEdge.TOP || dragEdge == DragEdge.BOTTOM) {
+                    if (ady > slop && ady * 0.5 > adx) {
+                        enablePullToBack = true;
+                        break;
+                    }
+
+                    if (adx > slop && adx > ady) {
+                        viewDragHelper.cancel();
+                        enablePullToBack = false;
+                        break;
+                    }
+                }
+                break;
+        }
 
         return true;
     }
@@ -434,7 +464,6 @@ public class SwipeBackLayout extends ViewGroup {
 
         @Override
         public int clampViewPositionHorizontal(View child, int left, int dx) {
-
             int result = 0;
 
             if (dragEdge == DragEdge.LEFT && !canChildScrollLeft() && left > 0) {
@@ -512,8 +541,6 @@ public class SwipeBackLayout extends ViewGroup {
             } else if (draggingOffset < finishAnchor) {
                 isBack = false;
             }
-
-            Log.d("mLogU", xvel + "");
 
             int finalLeft;
             int finalTop;
