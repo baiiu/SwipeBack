@@ -17,21 +17,23 @@ public class SwipeBackActivity extends AppCompatActivity implements SwipeBackLay
     public void setContentView(int layoutResID) {
         super.setContentView(getContainer());
         View view = LayoutInflater.from(this).inflate(layoutResID, null);
-        swipeBackLayout.addView(view);
+        getSwipeBackLayout().addView(view);
     }
 
     private View getContainer() {
-        swipeBackLayout = new SwipeBackLayout(this);
-        swipeBackLayout.setDragEdge(DEFAULT_DRAG_EDGE);
-        swipeBackLayout.setOnSwipeBackListener(this);
-        return swipeBackLayout;
+        getSwipeBackLayout().setDragEdge(DEFAULT_DRAG_EDGE);
+        getSwipeBackLayout().setOnSwipeBackListener(this);
+        return getSwipeBackLayout();
     }
 
     public void setDragEdge(SwipeBackLayout.DragEdge dragEdge) {
-        swipeBackLayout.setDragEdge(dragEdge);
+        getSwipeBackLayout().setDragEdge(dragEdge);
     }
 
     public SwipeBackLayout getSwipeBackLayout() {
+        if (swipeBackLayout == null) {
+            swipeBackLayout = new SwipeBackLayout(this);
+        }
         return swipeBackLayout;
     }
 
