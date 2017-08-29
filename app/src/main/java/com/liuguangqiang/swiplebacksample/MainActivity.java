@@ -1,28 +1,25 @@
 package com.liuguangqiang.swiplebacksample;
 
 import android.content.Intent;
-import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.support.v7.app.ActionBarActivity;
 import android.view.View;
-import android.widget.Button;
 
 public class MainActivity extends ActionBarActivity implements View.OnClickListener {
 
-    private Button btnCommon;
-    private Button btnListView;
-    private Button btnDemo;
-    private Button btnViewPager;
-    private Button btnWebView;
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    @Override protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        initViews();
+
+        findViewById(R.id.btn_common).setOnClickListener(this);
+        findViewById(R.id.btn_ListView).setOnClickListener(this);
+        findViewById(R.id.btn_demo).setOnClickListener(this);
+        findViewById(R.id.btn_viewpager).setOnClickListener(this);
+        findViewById(R.id.btn_webview).setOnClickListener(this);
+        findViewById(R.id.btn_mutiView).setOnClickListener(this);
     }
 
-    @Override
-    public void onClick(View v) {
+    @Override public void onClick(View v) {
         switch (v.getId()) {
             case R.id.btn_common:
                 skipActivity(CommonActivity.class);
@@ -37,30 +34,14 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
                 skipActivity(ViewPagerActivity.class);
                 break;
             case R.id.btn_webview:
-                skipActivity(WebViewActivity.class);
+                skipActivity(MultiViewActivity.class);
                 break;
         }
     }
 
-    private void initViews() {
-        btnCommon = (Button) findViewById(R.id.btn_common);
-        btnCommon.setOnClickListener(this);
-
-        btnListView = (Button) findViewById(R.id.btn_ListView);
-        btnListView.setOnClickListener(this);
-
-        btnDemo = (Button) findViewById(R.id.btn_demo);
-        btnDemo.setOnClickListener(this);
-
-        btnViewPager = (Button) findViewById(R.id.btn_viewpager);
-        btnViewPager.setOnClickListener(this);
-
-        btnWebView = (Button) findViewById(R.id.btn_webview);
-        btnWebView.setOnClickListener(this);
-    }
 
     private void skipActivity(Class<?> classOf) {
-        Intent intent = new Intent(getApplicationContext(), classOf);
+        Intent intent = new Intent(this, classOf);
         startActivity(intent);
     }
 
