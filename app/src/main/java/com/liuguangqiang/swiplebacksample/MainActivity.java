@@ -34,6 +34,9 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
                 skipActivity(ViewPagerActivity.class);
                 break;
             case R.id.btn_webview:
+                skipActivity(WebViewActivity.class);
+                break;
+            case R.id.btn_mutiView:
                 skipActivity(MultiViewActivity.class);
                 break;
         }

@@ -200,6 +200,7 @@ public class SwipeBackLayout extends ViewGroup {
                     stack.push(viewGroup.getChildAt(i));
                 }
             }
+
         }
     }
 

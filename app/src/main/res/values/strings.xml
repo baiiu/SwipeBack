@@ -9,5 +9,6 @@
     <string name="title_activity_list_view">ListViewActivity</string>
     <string name="title_activity_viewpager">ViewPagerActivity</string>
     <string name="title_activity_webview">WebViewActivity</string>
+    <string name="title_activity_multiActivity">MultiActivity</string>
 
 </resources>

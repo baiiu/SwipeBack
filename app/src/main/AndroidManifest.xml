@@ -2,8 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.liuguangqiang.swiplebacksample">
 
-    <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
 
     <application
         android:allowBackup="true"
@@ -14,31 +14,35 @@
             android:name=".MainActivity"
             android:label="@string/app_name">
             <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
+                <action android:name="android.intent.action.MAIN"/>
 
-                <category android:name="android.intent.category.LAUNCHER" />
+                <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
 
         <activity
             android:name=".DemoActivity"
-            android:theme="@style/Theme.No.ActionBar" />
+            android:theme="@style/Theme.No.ActionBar"/>
         <activity
             android:name=".CommonActivity"
             android:label="@string/title_activity_common"
-            android:theme="@style/ThemeSwipeBack" />
+            android:theme="@style/ThemeSwipeBack"/>
         <activity
             android:name=".ListViewActivity"
             android:label="@string/title_activity_list_view"
-            android:theme="@style/ThemeSwipeBack" />
+            android:theme="@style/ThemeSwipeBack"/>
         <activity
             android:name=".ViewPagerActivity"
             android:label="@string/title_activity_viewpager"
-            android:theme="@style/ThemeSwipeBack" />
+            android:theme="@style/ThemeSwipeBack"/>
         <activity
             android:name=".WebViewActivity"
             android:label="@string/title_activity_viewpager"
-            android:theme="@style/ThemeSwipeBack" />
+            android:theme="@style/ThemeSwipeBack"/>
+        <activity
+            android:name=".MultiViewActivity"
+            android:label="@string/title_activity_multiActivity"
+            android:theme="@style/ThemeSwipeBack"/>
     </application>
 
 </manifest>
