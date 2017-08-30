@@ -21,19 +21,12 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.support.v4.view.MotionEventCompat;
 import android.support.v4.view.ViewCompat;
-import android.support.v4.view.ViewPager;
 import android.support.v4.widget.ViewDragHelper;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.webkit.WebView;
-import android.widget.AbsListView;
-import android.widget.HorizontalScrollView;
-import android.widget.ScrollView;
 import java.util.Stack;
 
 /**
@@ -176,35 +169,45 @@ public class SwipeBackLayout extends ViewGroup {
             }
 
             if (dragEdge == DragEdge.LEFT || dragEdge == DragEdge.RIGHT) {
-                if (child instanceof HorizontalScrollView || child instanceof ViewPager || child instanceof WebView) {
+
+                if (canChildScrollLeft(child) || canChildScrollRight(child)) {
                     return child;
                 }
 
-                if (child instanceof RecyclerView) {
-                    RecyclerView recyclerView = (RecyclerView) child;
-                    RecyclerView.LayoutManager layoutManager = recyclerView.getLayoutManager();
-                    if (layoutManager instanceof LinearLayoutManager) {
-                        if (((LinearLayoutManager) layoutManager).getOrientation() == LinearLayoutManager.HORIZONTAL) {
-                            return child;
-                        }
-                    }
-                }
+                //if (child instanceof HorizontalScrollView || child instanceof ViewPager || child instanceof WebView) {
+                //    return child;
+                //}
+                //
+                //if (child instanceof RecyclerView) {
+                //    RecyclerView recyclerView = (RecyclerView) child;
+                //    RecyclerView.LayoutManager layoutManager = recyclerView.getLayoutManager();
+                //    if (layoutManager instanceof LinearLayoutManager) {
+                //        if (((LinearLayoutManager) layoutManager).getOrientation() == LinearLayoutManager.HORIZONTAL) {
+                //            return child;
+                //        }
+                //    }
+                //}
+
             }
 
             if (dragEdge == DragEdge.TOP || dragEdge == DragEdge.BOTTOM) {
-                if (child instanceof ScrollView || child instanceof AbsListView) {
+                if (canChildScrollDown(child) || canChildScrollUp(child)) {
                     return child;
                 }
 
-                if (child instanceof RecyclerView) {
-                    RecyclerView recyclerView = (RecyclerView) child;
-                    RecyclerView.LayoutManager layoutManager = recyclerView.getLayoutManager();
-                    if (layoutManager instanceof LinearLayoutManager) {
-                        if (((LinearLayoutManager) layoutManager).getOrientation() == LinearLayoutManager.VERTICAL) {
-                            return child;
-                        }
-                    }
-                }
+                //if (child instanceof ScrollView || child instanceof AbsListView) {
+                //    return child;
+                //}
+                //
+                //if (child instanceof RecyclerView) {
+                //    RecyclerView recyclerView = (RecyclerView) child;
+                //    RecyclerView.LayoutManager layoutManager = recyclerView.getLayoutManager();
+                //    if (layoutManager instanceof LinearLayoutManager) {
+                //        if (((LinearLayoutManager) layoutManager).getOrientation() == LinearLayoutManager.VERTICAL) {
+                //            return child;
+                //        }
+                //    }
+                //}
             }
 
             if (child instanceof ViewGroup) {
@@ -447,20 +450,20 @@ public class SwipeBackLayout extends ViewGroup {
         }
     }
 
-    public boolean canChildScrollUp() {
-        return ViewCompat.canScrollVertically(scrollChild, -1);
+    public static boolean canChildScrollUp(View child) {
+        return ViewCompat.canScrollVertically(child, -1);
     }
 
-    public boolean canChildScrollDown() {
-        return ViewCompat.canScrollVertically(scrollChild, 1);
+    public static boolean canChildScrollDown(View child) {
+        return ViewCompat.canScrollVertically(child, 1);
     }
 
-    private boolean canChildScrollRight() {
-        return ViewCompat.canScrollHorizontally(scrollChild, 1);
+    private static boolean canChildScrollRight(View child) {
+        return ViewCompat.canScrollHorizontally(child, 1);
     }
 
-    private boolean canChildScrollLeft() {
-        return ViewCompat.canScrollHorizontally(scrollChild, -1);
+    private static boolean canChildScrollLeft(View child) {
+        return ViewCompat.canScrollHorizontally(child, -1);
     }
 
     private void finish() {
@@ -489,11 +492,11 @@ public class SwipeBackLayout extends ViewGroup {
 
             int result = 0;
 
-            if (dragEdge == DragEdge.TOP && !canChildScrollUp() && top > 0) {
+            if (dragEdge == DragEdge.TOP && !canChildScrollUp(scrollChild) && top > 0) {
                 final int topBound = getPaddingTop();
                 final int bottomBound = verticalDragRange;
                 result = Math.min(Math.max(top, topBound), bottomBound);
-            } else if (dragEdge == DragEdge.BOTTOM && !canChildScrollDown() && top < 0) {
+            } else if (dragEdge == DragEdge.BOTTOM && !canChildScrollDown(scrollChild) && top < 0) {
                 final int topBound = -verticalDragRange;
                 final int bottomBound = getPaddingTop();
                 result = Math.min(Math.max(top, topBound), bottomBound);
@@ -505,11 +508,11 @@ public class SwipeBackLayout extends ViewGroup {
         @Override public int clampViewPositionHorizontal(View child, int left, int dx) {
             int result = 0;
 
-            if (dragEdge == DragEdge.LEFT && !canChildScrollLeft() && left > 0) {
+            if (dragEdge == DragEdge.LEFT && !canChildScrollLeft(scrollChild) && left > 0) {
                 final int leftBound = getPaddingLeft();
                 final int rightBound = horizontalDragRange;
                 result = Math.min(Math.max(left, leftBound), rightBound);
-            } else if (dragEdge == DragEdge.RIGHT && !canChildScrollRight() && left < 0) {
+            } else if (dragEdge == DragEdge.RIGHT && !canChildScrollRight(scrollChild) && left < 0) {
                 final int leftBound = -horizontalDragRange;
                 final int rightBound = getPaddingLeft();
                 result = Math.min(Math.max(left, leftBound), rightBound);
@@ -607,13 +610,14 @@ public class SwipeBackLayout extends ViewGroup {
             case TOP:
             case BOTTOM:
                 if (Math.abs(yvel) > Math.abs(xvel) && Math.abs(yvel) > AUTO_FINISHED_SPEED_LIMIT) {
-                    return dragEdge == DragEdge.TOP ? !canChildScrollUp() : !canChildScrollDown();
+                    return dragEdge == DragEdge.TOP ? !canChildScrollUp(scrollChild) : !canChildScrollDown(scrollChild);
                 }
                 break;
             case LEFT:
             case RIGHT:
                 if (Math.abs(xvel) > Math.abs(yvel) && Math.abs(xvel) > AUTO_FINISHED_SPEED_LIMIT) {
-                    return dragEdge == DragEdge.LEFT ? !canChildScrollLeft() : !canChildScrollRight();
+                    return dragEdge == DragEdge.LEFT ? !canChildScrollLeft(scrollChild)
+                            : !canChildScrollRight(scrollChild);
                 }
                 break;
         }

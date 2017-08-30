@@ -13,10 +13,10 @@ public class CommonActivity extends SwipeBackActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_common);
-        setTitle("Common");
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setTitleTextColor(Color.WHITE);
         setSupportActionBar(toolbar);
         setDragEdge(SwipeBackLayout.DragEdge.LEFT);
     }
+
 }
