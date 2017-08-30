@@ -13,7 +13,6 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 
         findViewById(R.id.btn_common).setOnClickListener(this);
         findViewById(R.id.btn_ListView).setOnClickListener(this);
-        findViewById(R.id.btn_demo).setOnClickListener(this);
         findViewById(R.id.btn_viewpager).setOnClickListener(this);
         findViewById(R.id.btn_webview).setOnClickListener(this);
         findViewById(R.id.btn_mutiView).setOnClickListener(this);
@@ -26,9 +25,6 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
                 break;
             case R.id.btn_ListView:
                 skipActivity(ListViewActivity.class);
-                break;
-            case R.id.btn_demo:
-                skipActivity(DemoActivity.class);
                 break;
             case R.id.btn_viewpager:
                 skipActivity(ViewPagerActivity.class);
